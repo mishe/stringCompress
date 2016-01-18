@@ -1,31 +1,33 @@
 (function(root){
-            function HashTable() {
-                this.Search = function (keyword) {
-                    var arr = this.ht;
-                    if (typeof (arr) != "undefined") {
-                        for (var i = 0; i < arr.length; i++) {
-                            if (arr[i].key == keyword) return arr[i].code;
-                        }
-                    }
-                    return null;
-                }
 
-                this.Insert = function (e) {
-                    var arr = this.ht;
-                    if (typeof (arr) == "undefined") {
-                        arr = [];
-                        arr[0] = e;
-                        this.ht = arr;
+            var hashTable=[];
+
+            function search(keyword){
+                var len=hashTable.length;
+                if(len>0){
+                    for (var i = 0; i < len; i++) {
+                        if (hashTable[i].key == keyword) return hashTable[i].code;
                     }
-                    else {
-                        arr[arr.length] = e;
-                    }
+                }
+            }
+
+            function insert (e) {
+                hashTable[hashTable.length] = e
+            }
+
+            function initTable(){
+                hashTable=[];
+                for (var i = 0; i < 128; i++) {
+                    insert({
+                        key: i,
+                        code: i
+                    });
                 }
             }
 
             function toUnicode(str){
                 if(!str) return '';
-                return str.replace(/[^\x00-\xff]/g,function(s){
+                return str.toString().replace(/[^\x00-\xff]/g,function(s){
                     return '\\u'+s.charCodeAt(0).toString(16);
                 });
             }
@@ -39,33 +41,23 @@
 
             root.compress=function(strNormalString) {
                 var strCompressedString = "",
-                        ht = new HashTable,
-                        used = 128,
-                        intLeftOver = 0,
-                        intOutputCode = 0,
-                        pcode = 0,
-                        ccode = 0,
-                        k = 0,
-                        intSearch,
-                        strNormalString=toUnicode(strNormalString),
-                        len = strNormalString.length,
-                        getCode=String.fromCharCode;
+                    used = 128,
+                    intLeftOver = 0,
+                    intOutputCode = 0,
+                    pcode = 0,
+                    ccode = 0,
+                    k = 0,
+                    intSearch,
+                    strNormalString=toUnicode(strNormalString),
+                    len = strNormalString.length,
+                    getCode=String.fromCharCode;
 
-                for (var i = 0; i < used; i++) {
-                    ht.Insert({
-                        key: i,
-                        code: i
-                    });
-                }
+                initTable();
 
-                if(ccode>255){
-                    code=toUnicode();
-                }
-
-                for (i = 0; i < len; i++) {
+                for (var i = 0; i < len; i++) {
                     ccode = strNormalString.charCodeAt(i);
                     k = (pcode << 8) | ccode;
-                    intSearch = ht.Search(k);
+                    intSearch = search(k);
                     if (intSearch != null) {
                         pcode = intSearch;
                     } else {
@@ -80,7 +72,7 @@
                         }
                         if (used < 4096) {
                             used++;
-                            ht.Insert({
+                            insert({
                                 key: k,
                                 code: used - 1
                             });
@@ -109,22 +101,22 @@
             };
             root.deCompress=function(strCompressedString){
                 var strNormalString = "",
-                        ht = [],
-                        used = 128,
-                        intLeftOver = 0,
-                        intOutputCode = 0,
-                        ccode = 0,
-                        pcode = 0,
-                        key = 0,
-                        len = strCompressedString.length,
-                        getCode=String.fromCharCode;
+                    ht = [],
+                    used = 128,
+                    intLeftOver = 0,
+                    intOutputCode = 0,
+                    ccode = 0,
+                    pcode = 0,
+                    key = 0,
+                    len = strCompressedString.length,
+                    getCode=String.fromCharCode;
 
                 for (var i = 0; i < used; i++) {
                     ht[i] = getCode(i);
                 }
 
 
-                for (var i = 0; i < len; i++) {
+                for (i = 0; i < len; i++) {
                     intLeftOver += 16;
                     intOutputCode <<= 16;
                     intOutputCode |= strCompressedString.charCodeAt(i);
@@ -152,6 +144,6 @@
                         }
                     }
                 }
-                return unicode2Char(strNormalString.substr(1,strNormalString.length-2));
+                return unicode2Char(strNormalString);
             }
         }(this));
