@@ -152,6 +152,6 @@
                         }
                     }
                 }
-                return unicode2Char(strNormalString);
+                return unicode2Char(strNormalString.substr(1,strNormalString.length-2));
             }
         }(this));
