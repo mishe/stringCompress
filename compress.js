@@ -132,6 +132,6 @@
                         }
                     }
                 }
-                return strNormalString;
+                return strNormalString.substr(1,strNormalString.length-2);
             }
         }(this))
