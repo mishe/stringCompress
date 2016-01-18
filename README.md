@@ -11,6 +11,7 @@ compress(string)
 解密字符串
 deCompress(string)
 
+很遗憾这个库不支持ascii以外的字符集。
 
 ## stringCompress2.js
 
