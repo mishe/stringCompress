@@ -1,9 +1,11 @@
 
-## 字符串压缩加密
+# 字符串压缩加密
+
+## stringCompress.js
 
 todo 非常遗憾的是不支持中文的解密
 
-## API
+### API
 
 给字符串加密
 compress(string)
@@ -11,7 +13,9 @@ compress(string)
 解密字符串
 deCompress(string)
 
+## xorCrypt.js
 
+加密和解密都是同一个函数，支持中文
 
 
 
